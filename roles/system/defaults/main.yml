@@ -1,0 +1,22 @@
+---
+username: user
+password: changeme
+
+ssh_port: 22
+ssh_root_login: "no"
+incident_notify_email: ""
+fail2ban_bantime: "1h"
+fail2ban_findtime: "3m"
+fail2ban_maxretry: 5
+open_ports:
+  - 80
+  - 443
+
+essential_packages:
+  - vim
+  - git
+  - curl
+  - htop
+
+hostname: "{{ ansible_hostname }}"
+ssh_home_loc: "{{ lookup('env', 'HOME') }}/.ssh"

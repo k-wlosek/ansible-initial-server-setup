@@ -1,0 +1,79 @@
+---
+- name: Install UFW package
+  ansible.builtin.package:
+    name: ufw
+    state: present
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, packages]
+
+- name: "UFW: Deny all incoming connections"
+  community.general.ufw:
+    rule: deny
+    direction: in
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, configuration, deny]
+
+- name: "UFW: Allow all outgoing connections"
+  community.general.ufw:
+    rule: allow
+    direction: out
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, configuration, allow]
+
+- name: "UFW: Allow OpenSSH"
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: "UFW: Allow SSH connections"
+  community.general.ufw:
+    rule: allow
+    port: "{{ ssh_port }}"
+    proto: tcp
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, configuration, allow]
+
+- name: "UFW: Rate limit SSH connections"
+  community.general.ufw:
+    rule: limit
+    port: "{{ ssh_port }}"
+    proto: tcp
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, configuration, limit]
+
+- name: "UFW: Log rejected connections"
+  community.general.ufw:
+    rule: reject
+    port: auth
+    log: true
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, configuration, reject]
+
+- name: "UFW: Allow ports {{ open_ports }}"
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: "{{ open_ports }}"
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, configuration, allow, ports]
+
+- name: "UFW: Enable UFW"
+  community.general.ufw:
+    state: enabled
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, configuration, enable]

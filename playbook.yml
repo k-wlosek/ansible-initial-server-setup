@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  become_method: sudo
+
+  name: Initial setup for a VPS
+  roles:
+    - role: system
+    - role: geerlingguy.pip
+    - role: geerlingguy.docker

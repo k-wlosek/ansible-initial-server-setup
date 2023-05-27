@@ -1,0 +1,14 @@
+---
+- name: Set up essential packages
+  ansible.builtin.include_tasks: essential.yml
+- name: Create and configure non-root user "{{ username }}"
+  ansible.builtin.include_tasks: user.yml
+- name: Configure SSH
+  ansible.builtin.include_tasks: ssh.yml
+- name: Configure automatic updates
+  ansible.builtin.include_tasks: autoupdate.yml
+
+- name: Configure fail2ban
+  ansible.builtin.include_tasks: security/fail2ban.yml
+- name: Configure firewall
+  ansible.builtin.include_tasks: security/firewall.yml

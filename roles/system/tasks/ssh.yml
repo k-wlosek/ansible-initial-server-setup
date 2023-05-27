@@ -1,0 +1,53 @@
+---
+- name: Create local ssh key
+  community.crypto.openssh_keypair:
+    path: "{{ ssh_home_loc }}/{{ hostname }}"
+    type: ed25519
+    size: 4096
+  become: false
+  delegate_to: localhost
+
+- name: Ensure .ssh directory exists for "{{ username }}"
+  ansible.builtin.file:
+    path: /home/{{ username }}/.ssh
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0700"
+
+- name: Add local ssh key to authorized_keys
+  ansible.builtin.copy:
+    content: "{{ lookup('file', '{{ ssh_home_loc }}/{{ hostname }}' + '.pub') }}"
+    dest: /home/{{ username }}/.ssh/authorized_keys
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0600"
+
+# Adapted from https://github.com/geerlingguy/ansible-role-security/blob/master/tasks/ssh.yml
+- name: Harden SSHD configuration
+  ansible.builtin.lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    validate: 'sshd -T -f %s'
+    mode: "0644"
+  with_items:
+    - regexp: "^PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    - regexp: "^PermitRootLogin"
+      line: "PermitRootLogin {{ ssh_root_login }}"
+    - regexp: "^UseDNS"
+      line: "UseDNS yes"
+    - regexp: "^PermitEmptyPasswords"
+      line: "PermitEmptyPasswords no"
+    - regexp: "^ChallengeResponseAuthentication"
+      line: "ChallengeResponseAuthentication no"
+    - regexp: "^GSSAPIAuthentication"
+      line: "GSSAPIAuthentication no"
+    - regexp: "^X11Forwarding"
+      line: "X11Forwarding no"
+    - regexp: "^PubkeyAuthentication"
+      line: "PubkeyAuthentication yes"
+  notify: Restart SSH daemon
+  tags: [ssh, password, authentication, security]
