@@ -7,7 +7,7 @@ configuration. It is intended to be used as a starting point for new servers.
 The playbook: updates the packages, installs packages defined in `essential_packages`,
 creates a new user, creates a ssh key for the new user, hardens SSH, installs
 and configures fail2ban, installs and configures UFW, installs and configures
-unattended-upgrades.
+unattended-upgrades, installs pip and Docker.
 
 ## Usage
 Create a `hosts` file and define the servers you want to setup.
