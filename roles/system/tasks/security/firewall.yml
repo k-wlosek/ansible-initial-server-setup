@@ -26,11 +26,6 @@
   become_method: sudo
   tags: [ufw, security, configuration, allow]
 
-- name: "UFW: Allow OpenSSH"
-  community.general.ufw:
-    rule: allow
-    name: OpenSSH
-
 - name: "UFW: Allow SSH connections"
   community.general.ufw:
     rule: allow
@@ -51,6 +46,14 @@
   become_method: sudo
   tags: [ufw, security, configuration, limit]
 
+- name: "UFW: Set logging"
+  community.general.ufw:
+    logging: 'on'
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ufw, security, configuration, logging]
+
 - name: "UFW: Log rejected connections"
   community.general.ufw:
     rule: reject
@@ -67,6 +70,8 @@
     port: "{{ item }}"
     proto: tcp
   loop: "{{ open_ports }}"
+  when: open_ports is defined
+  become: true
   become_user: root
   become_method: sudo
   tags: [ufw, security, configuration, allow, ports]
@@ -74,6 +79,7 @@
 - name: "UFW: Enable UFW"
   community.general.ufw:
     state: enabled
+  become: true
   become_user: root
   become_method: sudo
   tags: [ufw, security, configuration, enable]

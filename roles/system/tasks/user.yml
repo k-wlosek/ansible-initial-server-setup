@@ -20,6 +20,9 @@
     append: true
     update_password: on_create
     state: present
+  become: true
+  become_user: root
+  become_method: sudo
   tags: [user, create]
 
 - name: Enable passwordless sudo for "{{ username }}"
@@ -29,4 +32,7 @@
     line: '{{ username }} ALL=(ALL) NOPASSWD: ALL'
     validate: "/usr/sbin/visudo -cf %s"
     state: present
+  become: true
+  become_user: root
+  become_method: sudo
   tags: [sudo, passwordless, authentication]

@@ -5,6 +5,9 @@ findtime = {{ fail2ban_findtime }}
 maxretry = {{ fail2ban_maxretry }}
 
 [sshd]
-port = {{ ssh_port }}
-logpath = %(sshd_log)s
-backend = %(sshd_backend)s
+port     = {{ ssh_port }}
+logpath  = %(sshd_log)s
+backend  = %(sshd_backend)s
+enabled  = true
+log_path = /var/log/ssh_fail2ban.log
+action   = mail-whois[name=SSH, dest={{ incident_notify_email }}]

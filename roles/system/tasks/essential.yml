@@ -7,10 +7,16 @@
     autoremove: true
     autoclean: true
     state: present
+  become: true
+  become_user: root
+  become_method: sudo
   tags: [packages, update]
 
 - name: Install essential packages
   ansible.builtin.package:
     name: "{{ essential_packages }}"
     state: present
+  become: true
+  become_user: root
+  become_method: sudo
   tags: [packages, install, essential]

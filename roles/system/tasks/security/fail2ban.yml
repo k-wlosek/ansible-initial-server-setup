@@ -3,6 +3,9 @@
   ansible.builtin.package:
     name: fail2ban
     state: present
+  become: true
+  become_user: root
+  become_method: sudo
   tags: [fail2ban, security, packages]
 
 - name: Copy fail2ban jail configuration file
@@ -12,4 +15,7 @@
     owner: root
     group: root
     mode: "0644"
+  become: true
+  become_user: root
+  become_method: sudo
   tags: [fail2ban, security, configuration]

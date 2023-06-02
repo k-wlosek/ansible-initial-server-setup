@@ -14,6 +14,10 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: "0700"
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ssh, user, directory]
 
 - name: Add local ssh key to authorized_keys
   ansible.builtin.copy:
@@ -22,6 +26,10 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: "0600"
+  become: true
+  become_user: root
+  become_method: sudo
+  tags: [ssh, user, authorized_keys]
 
 # Adapted from https://github.com/geerlingguy/ansible-role-security/blob/master/tasks/ssh.yml
 - name: Harden SSHD configuration
@@ -50,4 +58,7 @@
     - regexp: "^PubkeyAuthentication"
       line: "PubkeyAuthentication yes"
   notify: Restart SSH daemon
+  become: true
+  become_user: root
+  become_method: sudo
   tags: [ssh, password, authentication, security]
